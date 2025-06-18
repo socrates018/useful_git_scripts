@@ -4,8 +4,6 @@ setlocal enabledelayedexpansion
 :: === CONFIGURATION ===
 REM Set your repository URL below (e.g., https://github.com/your-username/your-repo.git)
 set "REPO_URL=ENTER_YOUR_REPO_URL_HERE"
-REM Set your repository name below (e.g., your-repo)
-set "REPO_NAME=ENTER_YOUR_REPO_NAME_HERE"
 REM Set the commit hash to remove (e.g., abcdef1234567890)
 set COMMIT_HASH=ENTER_COMMIT_HASH_TO_REMOVE
 REM Set the git filter-repo command (leave as is unless you use a custom path)
@@ -27,8 +25,14 @@ if errorlevel 1 (
     exit /b
 )
 
-cd "%REPO_NAME%.git" || (
-    echo ERROR: Could not find %REPO_NAME%.git
+:: Extract repo name from URL (remove .git if present)
+for %%a in ("%REPO_URL%") do (
+    set "REPO_NAME=%%~na"
+)
+set "REPO_NAME=!REPO_NAME:.git=!"
+
+cd "!REPO_NAME!.git" || (
+    echo ERROR: Could not find !REPO_NAME!.git
     pause
     exit /b
 )
